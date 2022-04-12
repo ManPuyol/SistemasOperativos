@@ -6,7 +6,7 @@
 #include <sys/types.h>
 #include <semaphore.h>
 #include <fcntl.h>
-#define LIMIT 10000000
+#define LIMIT 1000000000
 
 int *variable_compartida;
 sem_t *semaforo;
@@ -19,7 +19,7 @@ int main(int argc, const char *argv[])
 	int i;
 	
 	variable_compartida = mmap(NULL, sizeof *variable_compartida, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-	semaforo = sem_open("/misemaforo", O_CREAT, S_IRUSR,1);
+	semaforo = sem_open("/misemaforo", O_CREAT,  S_IRUSR | S_IWUSR,1);
 	
 	*variable_compartida=0;
 	

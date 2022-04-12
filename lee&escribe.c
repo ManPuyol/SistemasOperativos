@@ -5,15 +5,21 @@
 #include <wait.h>
 #include <sys/mman.h>
 #include <sys/types.h>
+#include <semaphore.h>
+#include <fcntl.h>
 
+
+sem_t *semaforo;
 
 int main(int argc, const char *argv[])
 {
+	sem_unlink("/mis");
 	pid_t lee, escribe;
 	
 	int *variable_compartida;
 	
 	variable_compartida = mmap(NULL, sizeof *variable_compartida, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+	semaforo = sem_open("/mis", O_CREAT, S_IRUSR | S_IWUSR,1);
 	
 	*variable_compartida =-1010000;
 	
@@ -23,19 +29,24 @@ int main(int argc, const char *argv[])
 		escribe = fork();
 		
 		if(escribe == 0){//escribe
-			while(*variable_compartida == -1010000){}
-			
+			sleep(1);
+			sem_wait(semaforo);
 			printf("\nSe introdujo: %d \n", *variable_compartida);
-			
-		}
+			sem_post(semaforo);
+			exit(0);
+		}//escribe--END
 		
-		wait(NULL);
+		while(wait(NULL)>0);
+		sem_unlink("/mis");
 		
 		
 	}else{//lee
 		
+		sem_wait(semaforo);
 		printf("Dame Numero:  ");
 		scanf("%d", *&variable_compartida);
+		sem_post(semaforo);
+		
 		exit(0);
 	}
 	
