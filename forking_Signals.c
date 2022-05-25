@@ -24,7 +24,7 @@ int main(){
 		
 		puts("Breakfast Time!");
 		sleep(2);
-		kill(son, SIGUSR1);
+		pthread_kill(son, SIGUSR1);
 		
 		pause();
 		puts("Die...");
@@ -37,7 +37,7 @@ int main(){
 		puts("		Father woke me up ... 5 more secs please");
 		sleep(3);
 		puts("		Father wake up");
-		kill(getppid(), SIGUSR1);
+		pthread_kill(getppid(), SIGUSR1);
 		
 		pause();
 		
